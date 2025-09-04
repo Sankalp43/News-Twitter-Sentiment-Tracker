@@ -1,0 +1,66 @@
+schema: '2.0'
+stages:
+  check_window:
+    cmd: python check_window.py
+    deps:
+    - path: check_window.py
+      hash: md5
+      md5: 30f9cb0f1f1912b20f6951de3a65f235
+      size: 2057
+    - path: feedback_log.csv
+      hash: md5
+      md5: 14f85da3f48a2c0436b89404fbd128dc
+      size: 8034
+    outs:
+    - path: .trigger_file.txt
+      hash: md5
+      md5: aa562360bb14da379f8baaa6264ee0f6
+      size: 59
+  train_model:
+    cmd: python feedback_trainer.py
+    deps:
+    - path: .trigger_file.txt
+      hash: md5
+      md5: aa562360bb14da379f8baaa6264ee0f6
+      size: 59
+    - path: feedback_log.csv
+      hash: md5
+      md5: 14f85da3f48a2c0436b89404fbd128dc
+      size: 8034
+    - path: feedback_trainer.py
+      hash: md5
+      md5: e71c7eb24bbd5337b60caa2e66ce892a
+      size: 2036
+    outs:
+    - path: model/relevance_model.joblib
+      hash: md5
+      md5: cf4e010382d9ca6c06e8e29c4cf4cdaf
+      size: 3407
+    - path: model/vectorizer.joblib
+      hash: md5
+      md5: 4af4cd71123f310025003f57206bc608
+      size: 12372
+  evaluate:
+    cmd: python evaluate_model.py
+    deps:
+    - path: evaluate_model.py
+      hash: md5
+      md5: 1c97b990ac632dee1b7f394ee1d8b073
+      size: 1960
+    - path: feedback_log.csv
+      hash: md5
+      md5: 14f85da3f48a2c0436b89404fbd128dc
+      size: 8034
+    - path: model/relevance_model.joblib
+      hash: md5
+      md5: cf4e010382d9ca6c06e8e29c4cf4cdaf
+      size: 3407
+    - path: model/vectorizer.joblib
+      hash: md5
+      md5: 4af4cd71123f310025003f57206bc608
+      size: 12372
+    outs:
+    - path: metrics/metrics.json
+      hash: md5
+      md5: 474baace92af6a52797a1e9688348f0f
+      size: 91

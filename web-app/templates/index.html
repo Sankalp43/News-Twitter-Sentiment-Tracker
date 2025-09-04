@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>News Articles</title>
+    <style>
+        /* same styling as earlier */
+        body { font-family: Arial, sans-serif; background: #f4f4f4; margin: 0; padding: 0; text-align: center; }
+        .container { width: 80%; margin: auto; background: white; padding: 20px; margin-top: 20px; border-radius: 10px; }
+        .article-list { list-style: none; padding: 0; }
+        .article-list li { background: #fff; margin: 10px 0; padding: 15px; border-radius: 8px; box-shadow: 0px 0px 5px rgba(0,0,0,0.1); text-align: left; }
+        .tweet-section { margin-top: 10px; display: none; padding: 10px; background-color: #f9f9f9; border-radius: 8px; }
+        button { padding: 8px 12px; margin: 5px; border: none; border-radius: 5px; cursor: pointer; }
+        .relevance-btn { background-color: #28a745; color: white; }
+        .irrelevant-btn { background-color: #dc3545; color: white; }
+        .toggle-btn { background-color: #007BFF; color: white; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>News Articles for {{ filter_date }}</h1>
+
+        <form method="get" action="/">
+            <label for="date">Filter by Date:</label>
+            <input type="date" id="date" name="date" value="{{ filter_date }}">
+            <button type="submit">Filter</button>
+        </form>
+
+        {% if articles %}
+            <ul class="article-list">
+                {% for article in articles %}
+                    <li>
+                        <h2><a href="{{ article.weblink }}" target="_blank">{{ article.title }}</a></h2>
+                        {% if article.image_src %}
+                            <img src="{{ article.image_src }}" alt="{{ article.title }}">
+                        {% endif %}
+                        {% if article.summary %}
+                            <p><strong>Summary:</strong> {{ article.summary }}</p>
+                        {% endif %}
+                        {% if article.tweet_summary %}
+                            <p><strong>Tweet Summary:</strong> {{ article.tweet_summary }}</p>
+                        {% endif %}
+                        {% if article.news_summary %}
+                            <p><strong>News Summary:</strong> {{ article.news_summary }}</p>
+                        {% endif %}
+
+                        {% if article.tweets %}
+                            <button class="toggle-btn" onclick="toggleTweets('tweets-{{ article.id }}')">Show/Hide Top Tweets</button>
+                            <div id="tweets-{{ article.id }}" class="tweet-section">
+                                {% for tweet in article.tweets %}
+                                    <p><strong>{{ tweet.tweet_text }}</strong></p>
+                                    <p>Likes: {{ tweet.tweet_likes }}, Retweets: {{ tweet.tweet_retweets }}, Replies: {{ tweet.tweet_replies }}</p>
+                                    <p>Confidence: {{ tweet.confidence }}</p>
+                                    
+                                    <!-- Relevance Feedback Buttons -->
+                                    <button class="relevance-btn" onclick="sendFeedback('{{ article.title }}', '{{ tweet.tweet_text }}', 1)">Relevant</button>
+                                    <button class="irrelevant-btn" onclick="sendFeedback('{{ article.title }}', '{{ tweet.tweet_text }}', 0)">Not Relevant</button>
+                                    <hr>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <p><em>No tweets found for this article.</em></p>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No articles found for this date.</p>
+        {% endif %}
+    </div>
+
+    <script>
+        function toggleTweets(id) {
+            const section = document.getElementById(id);
+            if (section.style.display === "none" || section.style.display === "") {
+                section.style.display = "block";
+            } else {
+                section.style.display = "none";
+            }
+        }
+
+        function sendFeedback(headline, tweet, userLabel) {
+            fetch('/feedback', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    headline: headline,
+                    tweet: tweet,
+                    user_label: userLabel
+                }),
+            }).then(response => response.json())
+            .then(data => {
+                alert('Feedback sent!');
+            });
+        }
+    </script>
+</body>
+</html>

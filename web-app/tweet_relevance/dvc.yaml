@@ -1,0 +1,41 @@
+stages:
+  check_window:
+    cmd: python check_window.py
+    deps:
+    - check_window.py
+    - feedback_log.csv
+    outs:
+    - .trigger_file.txt
+
+  train_model:
+    cmd: python feedback_trainer.py
+    deps:
+    - feedback_trainer.py
+    - feedback_log.csv
+    - .trigger_file.txt
+    outs:
+    - model/relevance_model.joblib:
+        persist: true
+    - model/vectorizer.joblib:
+        persist: true
+    always_changed: true
+    frozen: false
+
+
+  evaluate:
+    cmd: python evaluate_model.py
+    deps:
+    - evaluate_model.py
+    - model/relevance_model.joblib
+    - model/vectorizer.joblib
+    - feedback_log.csv
+    metrics:
+    - metrics/metrics.json:
+        cache: false
+    always_changed: true
+    frozen: false
+metrics:
+- metrics/metrics.json
+plots:
+- metrics/plots/metrics:
+    x: step

@@ -1,0 +1,17 @@
+global:
+  scrape_interval: 15s # How often to scrape targets by default.
+  evaluation_interval: 15s # How often to evaluate rules.
+
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  - job_name: 'node_exporter'
+    static_configs:
+      - targets: ['host.docker.internal:9100']
+
+  - job_name: 'rss_reader_api'
+    static_configs:
+      - targets: ['host.docker.internal:8000']
+    metrics_path: /metrics

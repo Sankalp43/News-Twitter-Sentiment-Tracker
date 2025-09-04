@@ -1,35 +1,3 @@
-
-## Create a .env file to create the containers. Make sure it contains these configurations.
-## Environment Configuration
-The `.env` file stores sensitive environment variables. Ensure it contains:
-
-```
-# Database configuration variables
-POSTGRES_USER=postgres # yOUR POSTGRES USER
-POSTGRES_PASSWORD=8881 # YOUR POSTGRES PASSWORD
-POSTGRES_DB=postgres   # YOUR POSTGRES DB
-
-# RSS Feed configuration (The Hindu as example)
-RSS_FEED_URL=https://www.thehindu.com/news/national/?service=rss
-
-# Polling interval in seconds (default 10 mins)
-POLL_INTERVAL=600
-
-# Database connection details for RSS Reader app
-DB_HOST=db  # Use Docker service name to connect within the network
-
-# Feed dictionary paths (optional customization for different feeds)
-FEED_TITLE_PATH=title  
-FEED_PUBLISHED_PATH=published  
-FEED_LINK_FIELD=link  
-FEED_IMAGE_FIELD=media_content
-FEED_SUMMARY_PATH=summary  
-FEED_TAGS_PATH=tags
-```
-uvicorn main:main_app --workers 4 --timeout-keep-alive 120
-python rss-reader/scripts/rss_feed_reader.py
-python app.py
-
 # Docker Compose Project Report
 
 ## Project Overview
@@ -194,3 +162,34 @@ docker network ls
 docker network inspect <network_name>
 ```
 
+
+## Create a .env file to create the containers. Make sure it contains these configurations.
+## Environment Configuration
+The `.env` file stores sensitive environment variables. Ensure it contains:
+
+```
+# Database configuration variables
+POSTGRES_USER=postgres # yOUR POSTGRES USER
+POSTGRES_PASSWORD=8881 # YOUR POSTGRES PASSWORD
+POSTGRES_DB=postgres   # YOUR POSTGRES DB
+
+# RSS Feed configuration (The Hindu as example)
+RSS_FEED_URL=https://www.thehindu.com/news/national/?service=rss
+
+# Polling interval in seconds (default 10 mins)
+POLL_INTERVAL=600
+
+# Database connection details for RSS Reader app
+DB_HOST=db  # Use Docker service name to connect within the network
+
+# Feed dictionary paths (optional customization for different feeds)
+FEED_TITLE_PATH=title  
+FEED_PUBLISHED_PATH=published  
+FEED_LINK_FIELD=link  
+FEED_IMAGE_FIELD=media_content
+FEED_SUMMARY_PATH=summary  
+FEED_TAGS_PATH=tags
+```
+uvicorn main:main_app --workers 4 --timeout-keep-alive 120
+python rss-reader/scripts/rss_feed_reader.py
+python app.py
